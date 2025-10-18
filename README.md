@@ -11,5 +11,5 @@ onenand2flash.py
 
 2. Extract fat from flash.bin and reconstruct xsr3
 ```bash
-de_xsr3.py flash.bin
+de_xsr3.py flash.bin output_directory
 ```
