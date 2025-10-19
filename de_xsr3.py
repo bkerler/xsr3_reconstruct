@@ -5,6 +5,7 @@ pagesize = 0x210
 import os
 import sys
 from io import BytesIO
+import argparse
 
 STL_SECTOR_SIZE = 512
 STL_MAX_SAM_ENTRIES = 128
@@ -205,15 +206,18 @@ def create_xsr3_db(data):
     return euh3db
 
 def main():
-    if len(sys.argv)<2:
-        print("Usage: ./de_xsr3.py flash.bin")
-        sys.exit(1)
-    with open(sys.argv[1], "rb") as rf:
+    parser = argparse.ArgumentParser(description="XSR3 Recontruct")
+    parser.add_argument("input")
+    parser.add_argument("out_dir")
+    args = parser.parse_args()
+
+    with open(args.input, "rb") as rf:
         mdata = rf.read()
         xsr3_db = create_xsr3_db(mdata)
 
+        os.makedirs(args.out_dir, exist_ok=True)
         for nPartID in xsr3_db:
-            with open(f"{nPartID}.bin", "wb") as wf:
+            with open(os.path.join(args.out_dir, f"{nPartID}.bin"), "wb") as wf:
                 for nLun in xsr3_db[nPartID]:
                     buffer = bytearray(b"\x00"*0x3F000)
                     nLunItems = xsr3_db[nPartID][nLun]
